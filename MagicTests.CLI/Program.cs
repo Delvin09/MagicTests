@@ -6,7 +6,7 @@ namespace MagicTests.CLI
     {
         static void Main(string[] args)
         {
-            using var engine = new TestEngine(args);
+            usi ng var engine = new TestEngine(args);
             var providers = engine.LoadTestProviders();
             // render the tests list
 
