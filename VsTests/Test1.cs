@@ -1,7 +1,7 @@
 ﻿using MagicTests.Core;
 using System.Collections.Immutable;
 
-namespace MsTest
+namespace VsTests
 {
     [TestClass]
     public sealed class TestEngineTests

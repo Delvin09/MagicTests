@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTests.Core", "MagicTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTests.CLI", "MagicTests.CLI\MagicTests.CLI.csproj", "{7FE50134-3E10-4854-BF10-A796BC99D83F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsTest", "MsTest\MsTest.csproj", "{D9D748C0-A5D0-4E3D-80EB-ACDC43963083}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VsTests", "VsTests\VsTests.csproj", "{3D2EE9CD-B8B0-447B-BEED-F93907585BDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{7FE50134-3E10-4854-BF10-A796BC99D83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FE50134-3E10-4854-BF10-A796BC99D83F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FE50134-3E10-4854-BF10-A796BC99D83F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9D748C0-A5D0-4E3D-80EB-ACDC43963083}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9D748C0-A5D0-4E3D-80EB-ACDC43963083}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9D748C0-A5D0-4E3D-80EB-ACDC43963083}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9D748C0-A5D0-4E3D-80EB-ACDC43963083}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2EE9CD-B8B0-447B-BEED-F93907585BDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2EE9CD-B8B0-447B-BEED-F93907585BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2EE9CD-B8B0-447B-BEED-F93907585BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2EE9CD-B8B0-447B-BEED-F93907585BDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
