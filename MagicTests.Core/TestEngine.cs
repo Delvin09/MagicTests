@@ -1,4 +1,5 @@
 ﻿using MagicTests.Abstractions.Attributes;
+using MagicTests.Abstractions.Interfaces;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -22,8 +23,8 @@ namespace MagicTests.Core
                 .ToImmutableArray();
 
             _baseDirictories = _assemblies
-                .Select(x => Path.GetDirectoryName(x)?.ToLower())
-                .Where(x => x != null)
+                .Select(x => Path.GetDirectoryName(x)?.ToLower()!)
+                .Where(x => x is not null)
                 .ToHashSet();
 
             _context = new AssemblyLoadContext("TestEngine", true);
@@ -65,10 +66,13 @@ namespace MagicTests.Core
                                     Title = m.GetCustomAttribute<TestAttribute>()?.Title ?? m.Name,
                                     Skip = t.GetCustomAttribute<TestGroupAttribute>()?.Skip,
                                 })
+                                .Cast<ITestInfo>()
                                 .ToImmutableArray(),
-                        });
+                        })
+                        .Cast<ITestGroup>()
+                        .ToImmutableArray();
 
-                    result.Add(new TestProvider(assemblyPath, testGroups));
+                    result.Add(new TestProvider(assembly, assemblyPath, testGroups));
                 }
                 catch
                 {
@@ -83,10 +87,17 @@ namespace MagicTests.Core
         {
             foreach (var baseDic in _baseDirictories)
             {
-                var path = Path.Combine(baseDic, name.Name) + ".dll";
-                if (File.Exists(path))
+                try
                 {
-                    return context.LoadFromAssemblyPath(path);
+                    // AssemblyName.GetAssemblyName()
+                    var path = Path.Combine(baseDic, name.Name) + ".dll";
+                    if (File.Exists(path))
+                    {
+                        return context.LoadFromAssemblyPath(path);
+                    }
+                }
+                catch
+                {
                 }
             }
 
