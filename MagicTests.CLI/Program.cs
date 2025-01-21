@@ -8,7 +8,9 @@ namespace MagicTests.CLI
         {
             using var engine = new TestEngine(args);
             var providers = engine.LoadTestProviders();
-            // render the tests list
+
+            using var consoleRenderer = new ConsoleTestProgressRenderer(providers);
+            consoleRenderer.Init();
 
             foreach (var provider in providers)
             {
