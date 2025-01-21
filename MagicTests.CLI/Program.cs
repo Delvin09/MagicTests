@@ -1,4 +1,6 @@
-﻿using MagicTests.Core;
+﻿using MagicTests.Abstractions.Interfaces;
+using MagicTests.CLI.Loggers;
+using MagicTests.Core;
 
 namespace MagicTests.CLI
 {
@@ -6,15 +8,24 @@ namespace MagicTests.CLI
     {
         static void Main(string[] args)
         {
-            using var engine = new TestEngine(args);
-            var providers = engine.LoadTestProviders();
-
-            using var consoleRenderer = new ConsoleTestProgressRenderer(providers);
-            consoleRenderer.Init();
-
-            foreach (var provider in providers)
+            ILogger logger = new CombineLogger(new FileLogger()/*, new ConsoleLogger()*/);
+            try
             {
-                provider.Run();
+                using var engine = new TestEngine(logger, args);
+                var providers = engine.LoadTestProviders();
+
+                using var consoleRenderer = new ConsoleTestProgressRenderer(providers);
+                consoleRenderer.Init();
+
+                foreach (var provider in providers)
+                {
+                    provider.Run();
+                }
+            }
+            finally
+            {
+                if (logger is IDisposable disposable)
+                    disposable.Dispose();
             }
         }
     }

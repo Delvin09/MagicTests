@@ -7,11 +7,14 @@ namespace MagicTests.Core
 {
     public class TestProvider : ITestProvider, IRunnable // assembly
     {
-        public TestProvider(Assembly assembly, string assemblyPath, ImmutableArray<ITestGroup> testGroups)
+        private readonly ILogger _logger;
+
+        public TestProvider(Assembly assembly, string assemblyPath, ImmutableArray<ITestGroup> testGroups, ILogger logger)
         {
             Assembly = assembly;
             AssemblyPath = assemblyPath;
             TestGroups = testGroups;
+            _logger = logger;
         }
 
         public Assembly Assembly { get; }
@@ -39,6 +42,7 @@ namespace MagicTests.Core
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error("", ex);
                 }
                 finally
                 {
