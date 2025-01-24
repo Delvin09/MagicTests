@@ -1,10 +1,19 @@
-﻿namespace MagicTests.Abstractions.Results
+﻿using System.Text.Json.Serialization;
+using System.Xml.Serialization;
+
+namespace MagicTests.Abstractions.Results
 {
     public readonly struct TestResult
     {
         public string Message { get; init; }
 
+        [XmlIgnore]
+        [JsonIgnore]
         public Exception? Exception { get; init; }
+
+        public string? ExceptionMessage => Exception?.Message;
+
+        public string? ExceptionStack => Exception?.StackTrace;
 
         public DateTime Start { get; init; }
 
