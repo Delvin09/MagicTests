@@ -12,8 +12,9 @@ namespace MagicTests.Core
         private AssemblyLoadContext _context;
 
         private readonly HashSet<string> _baseDirictories;
+        private readonly ILogger _logger;
 
-        public TestEngine(params string[] assembliesPath)
+        public TestEngine(ILogger logger, params string[] assembliesPath)
         {
             if (assembliesPath == null || !assembliesPath.Any())
                 throw new ArgumentNullException(nameof(assembliesPath));
@@ -29,38 +30,47 @@ namespace MagicTests.Core
 
             _context = new AssemblyLoadContext("TestEngine", true);
             _context.Resolving += Context_Resolving;
+            this._logger = logger;
         }
 
         public void Dispose()
         {
+            _logger.Info("Engine dispose start");
             try
             {
                 _context.Resolving -= Context_Resolving;
                 _context.Unload();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.Error("Engine dispose exception", ex);
+            }
+            finally
+            {
+                _logger.Info("Engine dispose end");
             }
         }
 
         public IEnumerable<TestProvider> LoadTestProviders()
         {
             var result = new List<TestProvider>();
+            _logger.Info("Start load providers.");
 
             foreach (var assemblyPath in _assemblies)
             {
+                _logger.Info($"Start load `{assemblyPath}`.");
                 try
                 {
                     var assembly = _context.LoadFromAssemblyPath(assemblyPath);
                     var testGroups = assembly.GetTypes()
                         .Where(t => t.GetCustomAttribute<TestGroupAttribute>() != null)
-                        .Select(t => new TestGroupInfo
+                        .Select(t => new TestGroupInfo(_logger)
                         {
                             Title = t.GetCustomAttribute<TestGroupAttribute>()?.Title ?? t.Name,
                             Type = t,
                             Skip = t.GetCustomAttribute<TestGroupAttribute>()?.Skip,
                             Tests = t.GetMethods().Where(m => m.GetCustomAttribute<TestAttribute>() != null)
-                                .Select(m => new TestInfo
+                                .Select(m => new TestInfo(_logger)
                                 {
                                     Method = m,
                                     Title = m.GetCustomAttribute<TestAttribute>()?.Title ?? m.Name,
@@ -72,13 +82,17 @@ namespace MagicTests.Core
                         .Cast<ITestGroup>()
                         .ToImmutableArray();
 
-                    result.Add(new TestProvider(assembly, assemblyPath, testGroups));
+                    result.Add(new TestProvider(assembly, assemblyPath, testGroups, _logger));
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.Error($"Exception when `{assemblyPath}` load.", ex);
+                }
+                finally
+                {
+                    _logger.Info($"End load `{assemblyPath}`.");
                 }
             }
-
 
             return result.ToImmutableList();
         }

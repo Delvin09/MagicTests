@@ -9,6 +9,12 @@ namespace MagicTests.Core
     internal class TestInfo : ITestInfo, IRunnable
     {
         private TestState _state = TestState.Pending;
+        private ILogger _logger;
+
+        public TestInfo(ILogger logger)
+        {
+            this._logger = logger;
+        }
 
         public MethodInfo Method { get; init; }
 
@@ -45,6 +51,8 @@ namespace MagicTests.Core
 
         public void Run(object? subject)
         {
+            _logger.Info($"Start excec test '{Title}'");
+
             Result = new() { Start = DateTime.Now };
             try
             {
@@ -58,17 +66,21 @@ namespace MagicTests.Core
             {
                 Result = new(Result) { Exception = ex.InnerException, Message = ex.InnerException.Message, End = DateTime.Now };
                 State = TestState.Failed;
-                
+
+                _logger.Warn($"Test '{Title}' failed");
             }
             catch (Exception ex) // if something goes very bad
             {
                 Result = new(Result) { Exception = ex, Message = ex.Message, End = DateTime.Now };
                 State = TestState.Interrupted;
+
+                _logger.Error($"Test '{Title}' failed with exception.", ex);
                 throw;
             }
             finally
             {
                 Result = new(Result) { End = DateTime.Now };
+                _logger.Info($"End excec test '{Title}'");
             }
         }
 

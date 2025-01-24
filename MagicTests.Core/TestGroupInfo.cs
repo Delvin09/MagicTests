@@ -7,6 +7,13 @@ namespace MagicTests.Core
 {
     internal class TestGroupInfo : ITestGroup, IRunnable
     {
+        private ILogger logger;
+
+        public TestGroupInfo(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public string Title { get; init; }
 
         public Type Type { get; init; }

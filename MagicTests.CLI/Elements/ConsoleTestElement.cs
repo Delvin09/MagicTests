@@ -7,12 +7,15 @@ namespace MagicTests.CLI.Elements
 {
     internal class ConsoleTestElement : ConsoleElement
     {
+        private readonly int _stateTextPad;
         private readonly ITestInfo _testInfo;
 
         public ConsoleTestElement(ITestInfo testInfo)
         {
             _testInfo = testInfo;
             _testInfo.OnTestStateChange += TestInfo_OnTestStateChange;
+
+            _stateTextPad = Enum.GetNames<TestState>().Max(x => x.Length) + 1;
         }
 
         public override void Dispose()
@@ -30,6 +33,15 @@ namespace MagicTests.CLI.Elements
         {
             Console.ResetColor();
 
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            var time = _testInfo.Result.End >= _testInfo.Result.Start
+                ? _testInfo.Result.End - _testInfo.Result.Start
+                : TimeSpan.Zero;
+
+            Console.Write($"({time})");
+
+            Console.ResetColor();
+
             var stateName = _testInfo.State.ToString().ToUpper();
             var stateColor = GetStateColor();
             Console.Write('\t');
@@ -37,17 +49,9 @@ namespace MagicTests.CLI.Elements
             Console.ForegroundColor = stateColor.Foreground;
             Console.Write(stateName);
             Console.ResetColor();
+            Console.Write(new string(' ', _stateTextPad - stateName.Length));
             Console.Write("\t");
             Console.Write(_testInfo.Method.Name);
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            var time = _testInfo.Result.End >= _testInfo.Result.Start
-                ? _testInfo.Result.End - _testInfo.Result.Start
-                : TimeSpan.Zero;
-
-            Console.Write($"\t\t({time})");
-
-            Console.ResetColor();
         }
 
         private (ConsoleColor Background, ConsoleColor Foreground) GetStateColor()
